@@ -5,7 +5,7 @@ directions = {
     "L": (0, -1)
 }
 
-touching = [(0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -1), (-1, 0), (-1, 1)]
+touching = [(0, 0), (0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -1), (-1, 0), (-1, 1)]
 
 visited = set()
 
@@ -29,9 +29,7 @@ with open('input', 'r') as f:
                 # Movement vector
                 v = [head[0] - knots[i][0], head[1] - knots[i][1]]
                 
-                if abs(v[0]) + abs(v[1]) < 2:
-                    v = [0, 0]
-                elif head in [[knots[i][0] + d[0], knots[i][1] + d[1]] for d in touching]:
+                if head in [[knots[i][0] + d[0], knots[i][1] + d[1]] for d in touching]:
                     v = [0, 0]
                 else:
                     # Move tail

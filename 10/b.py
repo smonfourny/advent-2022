@@ -26,7 +26,6 @@ with open('input', 'r') as f:
 
     crt = [['.' for i in range(40)] for j in range(6)]
 
-    # (remaining cycles, to_add)
     pc = 0
     execution_state = get_next_op(pc, ops)
     signals = []

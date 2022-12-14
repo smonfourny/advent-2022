@@ -29,11 +29,7 @@ with open('input', 'r') as f:
     for line in lines:
         draw_line(line, grid)
 
-    print(grid)
-
 floor = max([cell[1] for cell in grid]) + 2
-
-print('floor', floor)
 
 r = 0
 

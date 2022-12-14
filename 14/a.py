@@ -28,9 +28,7 @@ with open('input', 'r') as f:
 
     for line in lines:
         draw_line(line, grid)
-
-    print(grid)
-
+        
 r = 0
 
 while True:

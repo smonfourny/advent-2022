@@ -1,5 +1,6 @@
 import re
 from collections import deque, defaultdict
+from itertools import combinations
 
 class Node:
 	def __init__(self, identifier, flow, neighbours):
@@ -93,7 +94,7 @@ def compute_value(curr_node, cost_so_far, path, valid_nodes):
 	return res
 
 def valves_to_key(valves):
-	return tuple(sorted(list(set(valves))))
+	return tuple(sorted(set(valves)))
 
 
 
@@ -111,9 +112,13 @@ checked = set()
 
 best_paths = defaultdict(int)
 
+print(best_paths)
+
 for option in paths_to_costs:
 	k = valves_to_key(option)
 	best_paths[k] = max(best_paths[k], paths_to_costs[option])
+
+print(best_paths)
 
 print('elephant time!!')
 
@@ -122,6 +127,7 @@ for i, option in enumerate(best_paths):
 	print('remaining', len(best_paths) - i)
 
 	elephant_valves = set(non_zero_valves).difference(option)
+	elephant_valves.add('AA')
 
 	if valves_to_key(option) in checked:
 		continue
@@ -130,15 +136,11 @@ for i, option in enumerate(best_paths):
 
 	sup = best_paths[option]
 
-	q = deque([('AA', 0, ['AA'], 0)])
+	elephant_sequence = valves_to_key(elephant_valves)
 
-	while q:
-		curr_node, cost_so_far, path, value = q.popleft()
-
-		res = compute_value(curr_node, cost_so_far, path[:], set(elephant_valves).difference(path))
-
-		max_found = max(max_found, sup + value)
-
-		q.extend(res)
+	for i in reversed(range(len(elephant_valves))):
+		for j in combinations(elephant_valves, i):
+			if valves_to_key(j) in best_paths:
+				max_found = max(max_found, sup + best_paths[valves_to_key(j)])
 
 print(max_found)

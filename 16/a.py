@@ -65,7 +65,11 @@ for target in non_zero_valves + ['AA']:
 
 		shortest_path_to_target_by_origin[origin+'-'+target] = shortest_path_to_target(origin, target)
 
-def compute_value(curr_node, cost_so_far, path, valid_nodes, paths_to_costs, elephant, sup):
+paths_to_costs = defaultdict(int)
+
+paths_to_costs[tuple(['AA'])] = 0
+
+def compute_value(curr_node, cost_so_far, path, valid_nodes):
 	res = []
 
 	for target in valid_nodes:
@@ -91,16 +95,12 @@ def compute_value(curr_node, cost_so_far, path, valid_nodes, paths_to_costs, ele
 def valves_to_key(valves):
 	return tuple(sorted(list(set(valves))))
 
-paths_to_costs = defaultdict(int)
-
-paths_to_costs[tuple(['AA'])] = 0
-
 q = deque([('AA', 0, ['AA'], 0)])
 
 while q:
 	curr_node, cost_so_far, path, value = q.popleft()
 
-	res = compute_value(curr_node, cost_so_far, path[:], set(non_zero_valves).difference(path), paths_to_costs, False, 0)
+	res = compute_value(curr_node, cost_so_far, path[:], set(non_zero_valves).difference(path))
 
 	q.extend(res)
 

@@ -33,7 +33,7 @@ with open('input', 'r') as f:
 
 		nodes_by_identifier[node.identifier] = node
 
-print(non_zero_valves)
+# print(non_zero_valves)
 
 shortest_path_to_target_by_origin = {}
 
@@ -96,8 +96,6 @@ def compute_value(curr_node, cost_so_far, path, valid_nodes):
 def valves_to_key(valves):
 	return tuple(sorted(set(valves)))
 
-
-
 q = deque([('AA', 0, ['AA'], 0)])
 
 while q:
@@ -112,13 +110,9 @@ checked = set()
 
 best_paths = defaultdict(int)
 
-print(best_paths)
-
 for option in paths_to_costs:
 	k = valves_to_key(option)
 	best_paths[k] = max(best_paths[k], paths_to_costs[option])
-
-print(best_paths)
 
 print('elephant time!!')
 

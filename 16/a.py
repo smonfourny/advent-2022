@@ -1,5 +1,5 @@
 import re
-from collections import deque
+from collections import deque, defaultdict
 
 class Node:
 	def __init__(self, identifier, flow, neighbours):
@@ -32,53 +32,76 @@ with open('input', 'r') as f:
 
 		nodes_by_identifier[node.identifier] = node
 
-paths_to_costs = {}
+print(non_zero_valves)
+
+shortest_path_to_target_by_origin = {}
+
+def shortest_path_to_target(origin, target):
+	q = deque([(origin, 0)])
+	visited = set()
+
+	while q:
+		node, depth = q.popleft()
+
+		if node in visited:
+			continue
+
+		visited.add(node)
+
+		if node == target:
+			return depth
+
+		neighbours = nodes_by_identifier[node].neighbours
+		for neighbour in neighbours:
+			if neighbour in visited:
+				continue
+			q.append((neighbour, depth + 1))
+
+
+for target in non_zero_valves + ['AA']:
+	for origin in non_zero_valves + ['AA']:
+		if target == 'AA' or origin == target:
+			continue
+
+		shortest_path_to_target_by_origin[origin+'-'+target] = shortest_path_to_target(origin, target)
+
+def compute_value(curr_node, cost_so_far, path, valid_nodes, paths_to_costs, elephant, sup):
+	res = []
+
+	for target in valid_nodes:
+		shortest = shortest_path_to_target_by_origin[f'{curr_node}-{target}']
+
+		if shortest + cost_so_far + 1 > MAX_DEPTH:
+			continue
+
+		# +1 because we have to open the valve
+		total_cost = cost_so_far + shortest_path_to_target_by_origin[f'{curr_node}-{target}'] + 1
+
+		new_path = path + [target]
+		node = nodes_by_identifier[target]
+
+		paths_to_costs[tuple(new_path)] = paths_to_costs[tuple(path)] + node.flow * (MAX_DEPTH - total_cost)
+
+		value = paths_to_costs[tuple(path)] + node.flow * (MAX_DEPTH - total_cost)
+
+		res.append((target, total_cost, new_path, value))
+
+	return res
+
+def valves_to_key(valves):
+	return tuple(sorted(list(set(valves))))
+
+paths_to_costs = defaultdict(int)
 
 paths_to_costs[tuple(['AA'])] = 0
 
-q = deque([('AA', 0, ['AA'])])
+q = deque([('AA', 0, ['AA'], 0)])
 
 while q:
-	print(len(paths_to_costs))
-	curr_node, cost_so_far, path = q.popleft()
+	curr_node, cost_so_far, path, value = q.popleft()
 
-	for target in non_zero_valves:
-		if target in path:
-			continue
+	res = compute_value(curr_node, cost_so_far, path[:], set(non_zero_valves).difference(path), paths_to_costs, False, 0)
 
-		sq = deque([(curr_node, 0)])
-
-		visited = set()
-
-		while sq:
-			visiting, depth = sq.popleft()
-
-			if visiting in visited:
-				continue
-
-			visited.add(visiting)
-
-			if depth + cost_so_far > MAX_DEPTH:
-				continue
-
-			if visiting == target:
-				# +1 because we have to open the valve
-				total_cost = cost_so_far + depth + 1
-
-				new_path = path + [target]
-				node = nodes_by_identifier[target]
-
-				paths_to_costs[tuple(new_path)] = paths_to_costs[tuple(path)] + node.flow * (MAX_DEPTH - total_cost)
-
-				q.append((target, total_cost, new_path))
-				continue
-
-			node = nodes_by_identifier[visiting]
-
-			for neighbour in node.neighbours:
-				if neighbour in visited:
-					continue
-
-				sq.append((neighbour, depth + 1))
+	q.extend(res)
 
 print(max(paths_to_costs.values()))

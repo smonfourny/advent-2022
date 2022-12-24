@@ -87,6 +87,7 @@ origin = (0, 1)
 target = (len(grid) - 1, len(grid[0]) - 2)
 
 for k in range(3):
+    print(f'loop {k}')
     q = deque([(original_duration, origin)])
 
     visited = set()

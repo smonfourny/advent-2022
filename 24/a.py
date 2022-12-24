@@ -81,15 +81,11 @@ time_to_blizzard_s = {
     for k in time_to_blizzard
 }
 
-# original_duration = 0
-# original_duration = 305
 original_duration = 0
 
 target = (len(grid) - 1, len(grid[0]) - 2)
-# target = (0, 1)
 
 q = deque([(original_duration, (0, 1))])
-# q = deque([(original_duration, (len(grid) - 1, len(grid[0]) - 2))])
 
 visited = set()
 
